@@ -9,12 +9,12 @@ public class LayoutItem {
     public double relativeX = -1, relativeY = -1, relativeWidth = -1, relativeHeight = -1;
     // null if root
     public String parentId;
-    
+
     // Helper methods
     public boolean hasRelativeSize() {
         return relativeWidth >= 0 && relativeHeight >= 0;
     }
-    
+
     public boolean hasRelativePosition() {
         return relativeX >= 0 && relativeY >= 0;
     }

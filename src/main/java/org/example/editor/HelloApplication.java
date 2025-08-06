@@ -10,12 +10,23 @@ import org.example.editor.layout.Component;
 import org.example.editor.layout.EditorLayout;
 import org.example.editor.layout.LayoutLoader;
 
+import java.io.File;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
-    @Override
+    private static File currentFile;
+    private String compilerPath = null;
+
+    public static void setCurrentFile(File selectedFile) {
+        currentFile = selectedFile;
+    }
+
+    public static File getCurrentFile() {
+        return currentFile;
+    }@Override
     public void start(Stage stage) throws IOException {
         EditorLayout editorLayout = new EditorLayout();
+
 
         // Saving geometry
         /*Pane containerPane = new Pane();
@@ -39,7 +50,7 @@ public class HelloApplication extends Application {
             "-fx-background-radius: 8;"
         );
         Component region1 = new Component(containerPane,"REGION1");
-        
+
         Button styledButton = new Button("B1");
         styledButton.setStyle(
             "-fx-background-color: linear-gradient(to bottom, #ffffff, #f0f0f0); " +
@@ -52,7 +63,7 @@ public class HelloApplication extends Application {
             "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 2, 0, 1, 1);"
         );
         Component button1 = new Component(styledButton,"BUTTON1");
-        
+
         region1.addChild(button1);
         editorLayout.addChild(region1);
         try {
@@ -68,7 +79,7 @@ public class HelloApplication extends Application {
 
 
         Scene scene = new Scene(editorLayout.getView(), 800, 650);
-        
+
         // Add keyboard shortcut to save layout (Ctrl+S)
         scene.setOnKeyPressed(event -> {
             if (event.isControlDown() && event.getCode() == KeyCode.S) {
@@ -81,10 +92,10 @@ public class HelloApplication extends Application {
                 event.consume();
             }
         });
-        
+
         stage.setScene(scene);
         stage.setTitle("Persistent EditorLayout Demo");
-        
+
         // Save layout when the application closes
         stage.setOnCloseRequest(event -> {
             try {
@@ -94,8 +105,11 @@ public class HelloApplication extends Application {
                 System.err.println("Failed to save layout on exit: " + e.getMessage());
             }
         });
-        
-        stage.show();
+
+        stage.show(); //Lukasz 1st version */
+
+
+
     }
 
     public static void main(String[] args) {

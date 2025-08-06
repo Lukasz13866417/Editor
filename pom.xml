@@ -10,8 +10,12 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>21</javafx.version>
     <java.version>17</java.version>
+    <javafx.version>21</javafx.version>
+    <pty4j.version>0.12.7</pty4j.version>
+    <commons-lang3.version>3.9</commons-lang3.version>
+    <jackson.version>2.13.3</jackson.version>
+    <mainClass>org.example.editor.HelloApplication</mainClass>
   </properties>
 
   <dependencies>
@@ -32,27 +36,75 @@
       <version>${javafx.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-web</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+
+    <!-- ControlsFX -->
+    <dependency>
       <groupId>org.controlsfx</groupId>
       <artifactId>controlsfx</artifactId>
-      <version>11.1.2</version> <!-- Use latest compatible with your JavaFX version -->
+      <version>11.1.2</version>
     </dependency>
+
+    <!-- Gson -->
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
+      <version>2.10.1</version>
+    </dependency>
+
+    <!-- Jackson -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <!-- Commons Lang -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
+    </dependency>
+
+    <!-- Commons IO -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
       <version>2.11.0</version>
+    </dependency>
+
+    <!-- PTY4J -->
+    <dependency>
+      <groupId>org.jetbrains.pty4j</groupId>
+      <artifactId>pty4j</artifactId>
+      <version>${pty4j.version}</version>
+    </dependency>
+
+    <!-- Logback -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.2.11</version>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <!-- Java Compiler -->
+      <!-- Kompilator Java -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
+          <release>${java.version}</release>
         </configuration>
       </plugin>
 
@@ -64,7 +116,80 @@
         <configuration>
           <mainClass>org.example.editor.HelloApplication</mainClass>
         </configuration>
+        <executions>
+          <execution>
+            <goals><goal>run</goal></goals>
+            <configuration>
+              <options>
+                <option>--add-modules=javafx.controls,javafx.fxml,javafx.graphics,javafx.web</option>
+              </options>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+
+      <!-- (opcjonalnie) Jar plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+      </plugin>
+
+      <!-- (opcjonalnie) Source attach -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+    <repository>
+      <id>jetbrains-teams</id>
+      <url>https://packages.jetbrains.team/maven/p/ij/intellij-dependencies</url>
+    </repository>
+    <repository>
+      <id>pty4j-releases</id>
+      <url>https://github.com/javaterminal/pty4j/raw/master/releases</url>
+    </repository>
+    <repository>
+      <id>javacomm-repo</id>
+      <url>https://www.sparetimelabs.com/maven2</url>
+    </repository>
+    <repository>
+      <id>sonatype.snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>repo</id>
+      <url>file://${project.basedir}/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>repo-snapshots</id>
+      <url>${project.basedir}/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+
+
 </project>

@@ -48,7 +48,7 @@ public class Component {
                 me.setRelativeSize(item.width / parentWidth, item.height / parentHeight);
             }
         }
-        
+
         if (item.hasRelativePosition()) {
             me.setRelativePosition(item.relativeX, item.relativeY);
         } else if (me.parent != null) {
@@ -83,7 +83,7 @@ public class Component {
                 if (childComp != null) {
                     me.children.add(childComp);
                     childComp.parent = me;
-                    
+
                     // CRITICAL: Add the child region to the parent's scene graph
                     if (me.region instanceof Pane parentPane) {
                         if (!parentPane.getChildren().contains(childComp.region)) {
@@ -143,7 +143,7 @@ public class Component {
     public void placeInParent(double relX, double relY) {
         // Store relative position
         setRelativePosition(relX, relY);
-        
+
         // Calculate and apply absolute position
         if (parent != null) {
             double parentWidth = parent.region.getWidth();
@@ -163,7 +163,7 @@ public class Component {
     public void setSizeInParent(double relW, double relH) {
         // Store relative size
         setRelativeSize(relW, relH);
-        
+
         // Calculate and apply absolute size
         if (parent != null) {
             double parentWidth = parent.region.getWidth();
@@ -198,7 +198,7 @@ public class Component {
     private void setSizeInParentAbsolute(double w, double h) {
         // Force the exact size by setting preferred, min, and max
         setSizeInParentWithoutTrigger(w,h);
-        
+
         // Trigger dynamic resizing of children after this component changes size
         resizeChildrenDynamically();
     }
@@ -236,7 +236,7 @@ public class Component {
     public void resizeChildrenDynamically() {
         double parentWidth = region.getWidth();
         double parentHeight = region.getHeight();
-        
+
         for (Component child : children) {
             // Check if child has relative sizing stored
             if (child.hasRelativeSize()) {
@@ -244,7 +244,7 @@ public class Component {
                 double newHeight = parentHeight * child.getRelativeHeight();
                 child.setSizeInParentWithoutTrigger(newWidth, newHeight);
             }
-            
+
             // Check if child has relative positioning
             if (child.hasRelativePosition()) {
                 double newX = parentWidth * child.getRelativeX();
@@ -253,7 +253,7 @@ public class Component {
             }
         }
     }
-    
+
     /**
      * Set size without triggering recursive resizing (to avoid infinite loops)
      */
@@ -266,7 +266,7 @@ public class Component {
         this.region.setMaxHeight(h);
         this.region.resize(w, h);
     }
-    
+
     /**
      * Enable relative sizing for this component
      */
@@ -274,7 +274,7 @@ public class Component {
         this.relativeWidth = Math.max(0.0, Math.min(1.0, relWidth));
         this.relativeHeight = Math.max(0.0, Math.min(1.0, relHeight));
     }
-    
+
     /**
      * Enable relative positioning for this component
      */
@@ -282,15 +282,15 @@ public class Component {
         this.relativeX = Math.max(0.0, Math.min(1.0, relX));
         this.relativeY = Math.max(0.0, Math.min(1.0, relY));
     }
-    
+
     public boolean hasRelativeSize() {
         return relativeWidth >= 0 && relativeHeight >= 0;
     }
-    
+
     public boolean hasRelativePosition() {
         return relativeX >= 0 && relativeY >= 0;
     }
-    
+
     public double getRelativeWidth() { return relativeWidth; }
     public double getRelativeHeight() { return relativeHeight; }
     public double getRelativeX() { return relativeX; }
@@ -300,7 +300,7 @@ public class Component {
     protected final Region region;
     private Component parent;
     private final List<Component> children;
-    
+
     // Relative sizing fields
     private double relativeWidth = -1;  // -1 means disabled, 0.0-1.0 means percentage
     private double relativeHeight = -1;

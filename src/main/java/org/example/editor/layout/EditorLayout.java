@@ -25,7 +25,7 @@ public class EditorLayout extends Component {
             clearDesignGesturesRecursively(this);
         }
     }
-    
+
     private void applyDesignGesturesRecursively(Component component) {
         // Don't apply gestures to the root editor layout itself
         if (component != this) {
@@ -33,13 +33,13 @@ public class EditorLayout extends Component {
             DesignGestures.makeResizable(component.region);
             DesignGestures.makeDraggable(component.region);
         }
-        
+
         // Recursively apply to all children
         for (Component child : component.getChildrenAsList()) {
             applyDesignGesturesRecursively(child);
         }
     }
-    
+
     private void clearDesignGesturesRecursively(Component component) {
         // Don't clear gestures from the root editor layout itself
         if (component != this) {
@@ -47,7 +47,7 @@ public class EditorLayout extends Component {
             DesignGestures.clearResizable(component.region);
             DesignGestures.clearDraggable(component.region);
         }
-        
+
         // Recursively clear from all children
         for (Component child : component.getChildrenAsList()) {
             clearDesignGesturesRecursively(child);
@@ -70,7 +70,7 @@ public class EditorLayout extends Component {
     public void addChild(Component child) {
         // Use your existing addChild logic
         super.addChild(child);
-        
+
         // Apply design gestures to the newly added component and its children
         if (currentMode == Mode.DESIGN) {
             applyDesignGesturesRecursively(child);

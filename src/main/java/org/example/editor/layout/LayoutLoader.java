@@ -61,7 +61,7 @@ public class LayoutLoader {
             li.height = curr.region.getHeight();
             Component parent = curr.getParent();
             li.parentId = parent != null ? parent.getId() : null;
-            
+
             // Check for relative sizing data stored in the node's user data
             Object userData = curr.region.getUserData();
             if (userData instanceof org.example.editor.layout.DesignGestures.RelativeSizeData relData) {
@@ -77,7 +77,7 @@ public class LayoutLoader {
                 li.relativeY = curr.hasRelativePosition() ? curr.getRelativeY() : -1;
             }
 
-            
+
             items.add(li);
             for (Component child : curr.getChildrenAsList()) {
                 stack.push(child);

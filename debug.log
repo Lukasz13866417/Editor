@@ -1,0 +1,60 @@
+[31272:31884:0727/131413.969:VERBOSE1:chrome\updater\updater.cc:316] Version: 140.0.7273.0, opt, x86_64, command line: "C:\Program Files (x86)\Google\Update\GoogleUpdate.exe" C:\Users\Antoni\Documents\test.cpp -o C:\Users\Antoni\Documents\test.exe -std=c++17
+[31272:31884:0727/131413.969:VERBOSE1:chrome\updater\updater.cc:319] OS version: 10.0.26100.4652, System uptime (seconds): 755943, parent pid: 33680
+[25160:18584:0727/131413.984:VERBOSE1:chrome\updater\updater.cc:316] Version: 140.0.7273.0, opt, x86_64, command line: "C:\Program Files (x86)\Google\Update\GoogleUpdate.exe" --crash-handler --system "--database=C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad" --url=https://clients2.google.com/cr/report --annotation=prod=Update4 --annotation=ver=140.0.7273.0 "--attachment=C:\Program Files (x86)\Google\GoogleUpdater\updater.log" --initial-client-data=0x270,0x274,0x278,0x24c,0x27c,0x7ff7beb11a78,0x7ff7beb11a84,0x7ff7beb11a90
+[25160:18584:0727/131413.986:VERBOSE1:chrome\updater\updater.cc:319] OS version: 10.0.26100.4652, System uptime (seconds): 755943, parent pid: 31272
+[31272:31884:0727/131413.987:VERBOSE1:chrome\updater\crash_reporter.cc:120] Crash handler launched and ready.
+[31272:31884:0727/131413.987:ERROR:chrome\updater\crash_client.cc:116] Failed to fetch completed crash reports: 3
+[31272:31884:0727/131413.987:ERROR:chrome\updater\crash_client.cc:132] Failed to fetch pending crash reports: 3
+[31272:31884:0727/131413.987:VERBOSE2:chrome\updater\usage_stats_permissions_win.cc:77] usage stats enabled by app {8a69d345-d564-463c-aff1-a69d9e530f96}
+[31272:31884:0727/131413.987:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:181] CreateFile C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad\settings.dat: Odmowa dostępu. (0x5)
+[31272:31884:0727/131413.988:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:181] CreateFile C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad\settings.dat: Odmowa dostępu. (0x5)
+[31272:31884:0727/131413.988:VERBOSE1:chrome\updater\updater.cc:90] Crash reporting initialized.
+[31272:31884:0727/131413.988:VERBOSE1:chrome\updater\updater.cc:145] IsUserAdmin: 0, IsUserNonElevatedAdmin: 1, IsUACOn: 1, IsElevatedWithUACOn: 0, LUA: 1
+[31272:31884:0727/131413.988:VERBOSE1:chrome\updater\updater.cc:220] Unknown command line switch.
+[31272:31884:0727/131413.990:VERBOSE1:chrome\updater\updater.cc:324] UpdaterMain (--) returned 75009.
+[25160:18584:0727/131414.007:VERBOSE1:chrome\updater\updater.cc:324] UpdaterMain (--crash-handler) returned 0.
+[23748:24256:0727/131426.567:VERBOSE1:chrome\updater\updater.cc:316] Version: 140.0.7273.0, opt, x86_64, command line: "C:\Program Files (x86)\Google\Update\GoogleUpdate.exe" C:\Users\Antoni\Documents\test.cpp -o C:\Users\Antoni\Documents\test.exe -std=c++17
+[23748:24256:0727/131426.567:VERBOSE1:chrome\updater\updater.cc:319] OS version: 10.0.26100.4652, System uptime (seconds): 755956, parent pid: 33680
+[2952:29616:0727/131426.584:VERBOSE1:chrome\updater\updater.cc:316] Version: 140.0.7273.0, opt, x86_64, command line: "C:\Program Files (x86)\Google\Update\GoogleUpdate.exe" --crash-handler --system "--database=C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad" --url=https://clients2.google.com/cr/report --annotation=prod=Update4 --annotation=ver=140.0.7273.0 "--attachment=C:\Program Files (x86)\Google\GoogleUpdater\updater.log" --initial-client-data=0x268,0x26c,0x270,0x244,0x274,0x7ff7beb11a78,0x7ff7beb11a84,0x7ff7beb11a90
+[2952:29616:0727/131426.584:VERBOSE1:chrome\updater\updater.cc:319] OS version: 10.0.26100.4652, System uptime (seconds): 755956, parent pid: 23748
+[23748:24256:0727/131426.584:VERBOSE1:chrome\updater\crash_reporter.cc:120] Crash handler launched and ready.
+[23748:24256:0727/131426.584:ERROR:chrome\updater\crash_client.cc:116] Failed to fetch completed crash reports: 3
+[23748:24256:0727/131426.586:ERROR:chrome\updater\crash_client.cc:132] Failed to fetch pending crash reports: 3
+[23748:24256:0727/131426.586:VERBOSE2:chrome\updater\usage_stats_permissions_win.cc:77] usage stats enabled by app {8a69d345-d564-463c-aff1-a69d9e530f96}
+[23748:24256:0727/131426.586:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:181] CreateFile C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad\settings.dat: Odmowa dostępu. (0x5)
+[23748:24256:0727/131426.586:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:181] CreateFile C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad\settings.dat: Odmowa dostępu. (0x5)
+[23748:24256:0727/131426.586:VERBOSE1:chrome\updater\updater.cc:90] Crash reporting initialized.
+[23748:24256:0727/131426.587:VERBOSE1:chrome\updater\updater.cc:145] IsUserAdmin: 0, IsUserNonElevatedAdmin: 1, IsUACOn: 1, IsElevatedWithUACOn: 0, LUA: 1
+[23748:24256:0727/131426.587:VERBOSE1:chrome\updater\updater.cc:220] Unknown command line switch.
+[23748:24256:0727/131426.587:VERBOSE1:chrome\updater\updater.cc:324] UpdaterMain (--) returned 75009.
+[2952:29616:0727/131426.603:VERBOSE1:chrome\updater\updater.cc:324] UpdaterMain (--crash-handler) returned 0.
+[31640:8320:0727/131554.113:VERBOSE1:chrome\updater\updater.cc:316] Version: 140.0.7273.0, opt, x86_64, command line: "C:\Program Files (x86)\Google\Update\GoogleUpdate.exe" C:\Users\Antoni\Documents\test2.cpp -o C:\Users\Antoni\Documents\test2.exe -std=c++17
+[31640:8320:0727/131554.114:VERBOSE1:chrome\updater\updater.cc:319] OS version: 10.0.26100.4652, System uptime (seconds): 756044, parent pid: 31204
+[31884:4788:0727/131554.130:VERBOSE1:chrome\updater\updater.cc:316] Version: 140.0.7273.0, opt, x86_64, command line: "C:\Program Files (x86)\Google\Update\GoogleUpdate.exe" --crash-handler --system "--database=C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad" --url=https://clients2.google.com/cr/report --annotation=prod=Update4 --annotation=ver=140.0.7273.0 "--attachment=C:\Program Files (x86)\Google\GoogleUpdater\updater.log" --initial-client-data=0x27c,0x280,0x284,0x258,0x288,0x7ff7beb11a78,0x7ff7beb11a84,0x7ff7beb11a90
+[31884:4788:0727/131554.130:VERBOSE1:chrome\updater\updater.cc:319] OS version: 10.0.26100.4652, System uptime (seconds): 756044, parent pid: 31640
+[31640:8320:0727/131554.130:VERBOSE1:chrome\updater\crash_reporter.cc:120] Crash handler launched and ready.
+[31640:8320:0727/131554.131:ERROR:chrome\updater\crash_client.cc:116] Failed to fetch completed crash reports: 3
+[31640:8320:0727/131554.131:ERROR:chrome\updater\crash_client.cc:132] Failed to fetch pending crash reports: 3
+[31640:8320:0727/131554.131:VERBOSE2:chrome\updater\usage_stats_permissions_win.cc:77] usage stats enabled by app {8a69d345-d564-463c-aff1-a69d9e530f96}
+[31640:8320:0727/131554.131:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:181] CreateFile C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad\settings.dat: Odmowa dostępu. (0x5)
+[31640:8320:0727/131554.131:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:181] CreateFile C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad\settings.dat: Odmowa dostępu. (0x5)
+[31640:8320:0727/131554.131:VERBOSE1:chrome\updater\updater.cc:90] Crash reporting initialized.
+[31640:8320:0727/131554.132:VERBOSE1:chrome\updater\updater.cc:145] IsUserAdmin: 0, IsUserNonElevatedAdmin: 1, IsUACOn: 1, IsElevatedWithUACOn: 0, LUA: 1
+[31640:8320:0727/131554.132:VERBOSE1:chrome\updater\updater.cc:220] Unknown command line switch.
+[31640:8320:0727/131554.132:VERBOSE1:chrome\updater\updater.cc:324] UpdaterMain (--) returned 75009.
+[31884:4788:0727/131554.149:VERBOSE1:chrome\updater\updater.cc:324] UpdaterMain (--crash-handler) returned 0.
+[2592:25852:0727/131615.963:VERBOSE1:chrome\updater\updater.cc:316] Version: 140.0.7273.0, opt, x86_64, command line: "C:\Program Files (x86)\Google\Update\GoogleUpdate.exe" C:\Users\Antoni\Documents\test2.cpp -o C:\Users\Antoni\Documents\test2.exe -std=c++17
+[2592:25852:0727/131615.963:VERBOSE1:chrome\updater\updater.cc:319] OS version: 10.0.26100.4652, System uptime (seconds): 756065, parent pid: 31204
+[24220:32276:0727/131615.981:VERBOSE1:chrome\updater\updater.cc:316] Version: 140.0.7273.0, opt, x86_64, command line: "C:\Program Files (x86)\Google\Update\GoogleUpdate.exe" --crash-handler --system "--database=C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad" --url=https://clients2.google.com/cr/report --annotation=prod=Update4 --annotation=ver=140.0.7273.0 "--attachment=C:\Program Files (x86)\Google\GoogleUpdater\updater.log" --initial-client-data=0x270,0x274,0x278,0x24c,0x27c,0x7ff7beb11a78,0x7ff7beb11a84,0x7ff7beb11a90
+[24220:32276:0727/131615.981:VERBOSE1:chrome\updater\updater.cc:319] OS version: 10.0.26100.4652, System uptime (seconds): 756065, parent pid: 2592
+[2592:25852:0727/131615.981:VERBOSE1:chrome\updater\crash_reporter.cc:120] Crash handler launched and ready.
+[2592:25852:0727/131615.982:ERROR:chrome\updater\crash_client.cc:116] Failed to fetch completed crash reports: 3
+[2592:25852:0727/131615.982:ERROR:chrome\updater\crash_client.cc:132] Failed to fetch pending crash reports: 3
+[2592:25852:0727/131615.982:VERBOSE2:chrome\updater\usage_stats_permissions_win.cc:77] usage stats enabled by app {8a69d345-d564-463c-aff1-a69d9e530f96}
+[2592:25852:0727/131615.982:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:181] CreateFile C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad\settings.dat: Odmowa dostępu. (0x5)
+[2592:25852:0727/131615.983:ERROR:third_party\crashpad\crashpad\util\file\file_io_win.cc:181] CreateFile C:\Program Files (x86)\Google\GoogleUpdater\140.0.7273.0\Crashpad\settings.dat: Odmowa dostępu. (0x5)
+[2592:25852:0727/131615.983:VERBOSE1:chrome\updater\updater.cc:90] Crash reporting initialized.
+[2592:25852:0727/131615.983:VERBOSE1:chrome\updater\updater.cc:145] IsUserAdmin: 0, IsUserNonElevatedAdmin: 1, IsUACOn: 1, IsElevatedWithUACOn: 0, LUA: 1
+[2592:25852:0727/131615.983:VERBOSE1:chrome\updater\updater.cc:220] Unknown command line switch.
+[2592:25852:0727/131615.985:VERBOSE1:chrome\updater\updater.cc:324] UpdaterMain (--) returned 75009.
+[24220:32276:0727/131616.003:VERBOSE1:chrome\updater\updater.cc:324] UpdaterMain (--crash-handler) returned 0.
