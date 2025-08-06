@@ -1,6 +1,5 @@
 package org.example.editor.layout;
 
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 
@@ -14,23 +13,44 @@ public class EditorLayout extends Component {
     public enum Mode { DESIGN, USE }
 
     public EditorLayout() {
-        super(new BorderPane(),"EDITOR_LAYOUT");
+        super(new Pane(),"EDITOR_LAYOUT");
         currentMode = Mode.DESIGN;
         applyMode();
     }
 
     private void applyMode() {
-        Pane canvas = getCanvas();
         if (currentMode == Mode.DESIGN) {
-            canvas.getChildren().forEach(node -> {
-                DesignGestures.makeResizable(node);
-                DesignGestures.makeDraggable(node);
-            });
+            applyDesignGesturesRecursively(this);
         } else {
-            canvas.getChildren().forEach(node -> {
-                DesignGestures.clearResizable(node);
-                DesignGestures.clearDraggable(node);
-            });
+            clearDesignGesturesRecursively(this);
+        }
+    }
+    
+    private void applyDesignGesturesRecursively(Component component) {
+        // Don't apply gestures to the root editor layout itself
+        if (component != this) {
+            // Apply gestures to this component's region
+            DesignGestures.makeResizable(component.region);
+            DesignGestures.makeDraggable(component.region);
+        }
+        
+        // Recursively apply to all children
+        for (Component child : component.getChildrenAsList()) {
+            applyDesignGesturesRecursively(child);
+        }
+    }
+    
+    private void clearDesignGesturesRecursively(Component component) {
+        // Don't clear gestures from the root editor layout itself
+        if (component != this) {
+            // Clear gestures from this component's region
+            DesignGestures.clearResizable(component.region);
+            DesignGestures.clearDraggable(component.region);
+        }
+        
+        // Recursively clear from all children
+        for (Component child : component.getChildrenAsList()) {
+            clearDesignGesturesRecursively(child);
         }
     }
 
@@ -50,11 +70,14 @@ public class EditorLayout extends Component {
     public void addChild(Component child) {
         // Use your existing addChild logic
         super.addChild(child);
-        applyMode();  // re-apply so handlers get wired if needed
+        
+        // Apply design gestures to the newly added component and its children
+        if (currentMode == Mode.DESIGN) {
+            applyDesignGesturesRecursively(child);
+        }
     }
 
     /** Where all Components live */
-    @SuppressWarnings("unchecked")
     private Pane getCanvas() {
         return (Pane) (region);
     }
