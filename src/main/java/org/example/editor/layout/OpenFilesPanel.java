@@ -11,12 +11,13 @@ import java.io.*;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class OpenFilesPanel extends VBox {
+public class OpenFilesPanel extends Component {
     private final ListView<Object> fileListView = new ListView<>();
     private final File recentFilesStore = new File("recent.txt");
     private final Consumer<File> onFileSelected;
 
     public OpenFilesPanel(Consumer<File> onFileSelected) {
+        super(new VBox(), "open-files-panel");
         this.onFileSelected = onFileSelected;
 
         // Display folders and files differently
@@ -69,9 +70,10 @@ public class OpenFilesPanel extends VBox {
             }
         });
 
-        this.getChildren().add(fileListView);
-        this.setPrefWidth(160);
-        this.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 6;");
+        VBox box = (VBox) this.region;
+        box.getChildren().add(fileListView);
+        box.setPrefWidth(160);
+        box.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 6;");
 
         loadRecentFiles();
     }

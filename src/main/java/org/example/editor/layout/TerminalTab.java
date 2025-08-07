@@ -23,6 +23,9 @@ public class TerminalTab extends Tab {
     private final Terminal terminal;
     private final TabNameGenerator tabNameGenerator;
     private static final String NEW_TAB_KEY = "T";
+    private boolean allowNewTerminal = true;
+    private boolean allowClose = true;
+
 
     public TerminalTab(TerminalConfig terminalConfig, TabNameGenerator tabNameGenerator, Path terminalPath) {
         this(new Terminal(terminalConfig, terminalPath), tabNameGenerator);
@@ -33,13 +36,17 @@ public class TerminalTab extends Tab {
         this.tabNameGenerator = tabNameGenerator;
 
         this.terminal.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-
-            if (event.isShortcutDown() && NEW_TAB_KEY.equalsIgnoreCase(event.getText())) {
+            if (event.isShortcutDown() && NEW_TAB_KEY.equalsIgnoreCase(event.getText()) && allowNewTerminal) {
                 newTerminal();
             }
         });
 
+
         this.setOnCloseRequest(event -> {
+            if (!allowClose) {
+                event.consume(); // zablokuj zamknięcie
+                return;
+            }
             event.consume();
             closeTerminal();
         });
@@ -91,16 +98,18 @@ public class TerminalTab extends Tab {
     }
 
     public void closeTerminal(ActionEvent... actionEvent) {
+        if (!allowClose) return;
+
         ThreadHelper.runActionLater(() -> {
             final ObservableList<Tab> tabs = this.getTabPane().getTabs();
             if (tabs.size() == 1) {
                 newTerminal(actionEvent);
             }
             tabs.remove(this);
-
             destroy();
         });
     }
+
 
     public void destroy() {
         ThreadHelper.start(() -> {
@@ -147,4 +156,13 @@ public class TerminalTab extends Tab {
     public Terminal getTerminal() {
         return terminal;
     }
+    public void setAllowNewTerminal(boolean allow) {
+        this.allowNewTerminal = allow;
+    }
+    public void setAllowClose(boolean allowClose) {
+        this.allowClose = allowClose;
+    }
+
+
+
 }

@@ -291,6 +291,10 @@ public class Component {
         return relativeX >= 0 && relativeY >= 0;
     }
 
+    public Region getRegion() {
+        return region;
+    }
+
     public double getRelativeWidth() { return relativeWidth; }
     public double getRelativeHeight() { return relativeHeight; }
     public double getRelativeX() { return relativeX; }

@@ -132,4 +132,9 @@ public class Terminal extends TerminalView {
         return process;
     }
 
+    public void setInputDisabled(boolean disabled) {
+        super.setInputDisabled(disabled); // wywołuje metodę z TerminalView
+    }
+
+
 }

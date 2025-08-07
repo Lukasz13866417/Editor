@@ -1,5 +1,7 @@
 package org.example.editor.layout;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 
@@ -12,14 +14,15 @@ public class EditorLayout extends Component {
 
     public enum Mode { DESIGN, USE }
 
+    private final ObjectProperty<Mode> modeProperty = new SimpleObjectProperty<>(Mode.USE);
+
     public EditorLayout() {
-        super(new Pane(),"EDITOR_LAYOUT");
-        currentMode = Mode.DESIGN;
+        super(new Pane(), "EDITOR_LAYOUT");
         applyMode();
     }
 
     private void applyMode() {
-        if (currentMode == Mode.DESIGN) {
+        if (getMode() == Mode.DESIGN) {
             applyDesignGesturesRecursively(this);
         } else {
             clearDesignGesturesRecursively(this);
@@ -27,63 +30,53 @@ public class EditorLayout extends Component {
     }
 
     private void applyDesignGesturesRecursively(Component component) {
-        // Don't apply gestures to the root editor layout itself
         if (component != this) {
-            // Apply gestures to this component's region
             DesignGestures.makeResizable(component.region);
             DesignGestures.makeDraggable(component.region);
         }
-
-        // Recursively apply to all children
         for (Component child : component.getChildrenAsList()) {
             applyDesignGesturesRecursively(child);
         }
     }
 
     private void clearDesignGesturesRecursively(Component component) {
-        // Don't clear gestures from the root editor layout itself
         if (component != this) {
-            // Clear gestures from this component's region
             DesignGestures.clearResizable(component.region);
             DesignGestures.clearDraggable(component.region);
         }
-
-        // Recursively clear from all children
         for (Component child : component.getChildrenAsList()) {
             clearDesignGesturesRecursively(child);
         }
     }
 
     public void setMode(Mode mode) {
-        if (mode != currentMode) {
-            currentMode = mode;
+        if (mode != modeProperty.get()) {
+            modeProperty.set(mode);
             applyMode();
         }
     }
 
     public Mode getMode() {
-        return currentMode;
+        return modeProperty.get();
     }
 
-    /** Convenience: add a Component into the editor’s canvas. */
+    public ObjectProperty<Mode> modeProperty() {
+        return modeProperty;
+    }
+
     @Override
     public void addChild(Component child) {
-        // Use your existing addChild logic
         super.addChild(child);
-
-        // Apply design gestures to the newly added component and its children
-        if (currentMode == Mode.DESIGN) {
+        if (getMode() == Mode.DESIGN) {
             applyDesignGesturesRecursively(child);
         }
     }
 
-    /** Where all Components live */
-    private Pane getCanvas() {
-        return (Pane) (region);
+    public Region getView() {
+        return region;
     }
 
-    public Region getView() { return region; }
-
-    private Mode currentMode;
-
+    private Pane getCanvas() {
+        return (Pane) region;
+    }
 }

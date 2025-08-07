@@ -12,15 +12,20 @@
         private final TextArea textArea;
 
         public CodeEditor(String id) {
-            super(new Pane(), id);  // Tworzymy Pane jako bazowy Region
+            super(new Pane(), id);  // Base region is a Pane
             textArea = new TextArea();
             textArea.setPromptText("Start typing your code here...");
             textArea.setWrapText(false);
             textArea.setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 13px;");
 
-            // Ustaw TextArea jako jedyne dziecko w Pane
-            ((Pane) super.region).getChildren().add(textArea);
+            Pane pane = (Pane) this.region;
+            pane.getChildren().add(textArea);
+
+// Dopasowanie rozmiaru TextArea do regionu
+            pane.widthProperty().addListener((obs, oldVal, newVal) -> textArea.setPrefWidth(newVal.doubleValue()));
+            pane.heightProperty().addListener((obs, oldVal, newVal) -> textArea.setPrefHeight(newVal.doubleValue()));
         }
+
 
         /**
          * Pobiera tekst z edytora kodu
@@ -48,5 +53,11 @@
          */
         public TextArea getTextArea() {
             return textArea;
+        }
+
+        public void setDesignMode(boolean isDesign) {
+            textArea.setMouseTransparent(isDesign); // wyłącza przechwytywanie kliknięć
+            textArea.setFocusTraversable(!isDesign); // nie łapie focusa
+            textArea.setEditable(!isDesign);         // nie można edytować
         }
     }

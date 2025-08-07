@@ -35,6 +35,7 @@ public class TerminalView extends Pane {
 	private TerminalConfig terminalConfig = new TerminalConfig();
 	protected final CountDownLatch countDownLatch = new CountDownLatch(1);
 	private static Path tempDirectory;
+	private boolean inputDisabled = false;
 
 	static {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -106,6 +107,12 @@ public class TerminalView extends Pane {
 			}
 		}
 	}
+	public void setInputDisabled(boolean disabled) {
+		this.inputDisabled = disabled;
+		webView.setMouseTransparent(disabled);         // blokuje myszkę
+		webView.setFocusTraversable(!disabled);        // blokuje fokus
+	}
+
 
 	@WebkitCall(from = "hterm")
 	public String getPrefs() {
@@ -275,5 +282,4 @@ public class TerminalView extends Pane {
 	public void setErrorReader(Reader reader) {
 		errorReaderProperty.set(reader);
 	}
-
 }

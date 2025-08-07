@@ -16,7 +16,12 @@ public class ConsoleView extends Component {
         consoleArea.setEditable(false);
         consoleArea.setWrapText(true);
         consoleArea.setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 12px;");
-        ((Pane) super.region).getChildren().add(consoleArea);
+
+        Pane pane = (Pane) this.region;
+        pane.getChildren().add(consoleArea);
+
+        pane.widthProperty().addListener((obs, oldVal, newVal) -> consoleArea.setPrefWidth(newVal.doubleValue()));
+        pane.heightProperty().addListener((obs, oldVal, newVal) -> consoleArea.setPrefHeight(newVal.doubleValue()));
     }
 
     /**
@@ -52,5 +57,11 @@ public class ConsoleView extends Component {
      */
     public TextArea getTextArea() {
         return consoleArea;
+    }
+
+    public void setDesignMode(boolean isDesign) {
+        consoleArea.setMouseTransparent(isDesign); // wyłącza przechwytywanie kliknięć
+        consoleArea.setFocusTraversable(!isDesign); // nie łapie focusa
+        consoleArea.setEditable(!isDesign);         // nie można edytować
     }
 }
