@@ -1,4 +1,4 @@
-package org.example.editor.layout;
+package org.example.editor.layout_elements;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
@@ -6,6 +6,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import org.example.editor.layout_api.Component;
 
 import java.io.*;
 import java.util.List;

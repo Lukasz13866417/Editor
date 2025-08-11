@@ -1,9 +1,7 @@
-package org.example.editor.layout;
+package org.example.editor.layout_elements;
 
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
-import org.example.editor.layout.CompilerSettingsDialog;
-import org.example.editor.layout.CppCompiler;
 
 public class CompilerSelectButton extends Button {
     private final Stage stage;

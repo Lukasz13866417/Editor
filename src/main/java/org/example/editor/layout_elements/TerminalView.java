@@ -1,4 +1,4 @@
-package org.example.editor.layout;
+package org.example.editor.layout_elements;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.editor.annotation.WebkitCall;

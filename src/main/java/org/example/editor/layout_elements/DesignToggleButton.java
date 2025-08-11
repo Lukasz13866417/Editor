@@ -1,7 +1,7 @@
-package org.example.editor.layout;
+package org.example.editor.layout_elements;
 
 import javafx.scene.control.ToggleButton;
-import org.example.editor.layout.EditorLayout;
+import org.example.editor.layout_api.EditorLayout;
 
 public class DesignToggleButton extends ToggleButton {
     public DesignToggleButton(EditorLayout layout, CodeEditor codeEditor, ConsoleView consoleView, TerminalTabPaneComponent terminalTabPaneComponent) {

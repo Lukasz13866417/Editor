@@ -1,4 +1,4 @@
-package org.example.editor.layout;
+package org.example.editor.layout_api;
 
 import com.google.gson.Gson;
 
@@ -64,7 +64,7 @@ public class LayoutLoader {
 
             // Check for relative sizing data stored in the node's user data
             Object userData = curr.region.getUserData();
-            if (userData instanceof org.example.editor.layout.DesignGestures.RelativeSizeData relData) {
+            if (userData instanceof DesignGestures.RelativeSizeData relData) {
                 li.relativeWidth = relData.relativeWidth;
                 li.relativeHeight = relData.relativeHeight;
                 li.relativeX = relData.relativeX;

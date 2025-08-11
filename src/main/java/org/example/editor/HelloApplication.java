@@ -11,7 +11,8 @@ import javafx.stage.Stage;
 import org.example.editor.config.DefaultTabNameGenerator;
 import org.example.editor.config.TerminalConfig;
 import org.example.editor.helper.ThreadHelper;
-import org.example.editor.layout.*;
+import org.example.editor.layout_api.EditorLayout;
+import org.example.editor.layout_elements.*;
 
 import java.io.File;
 import java.io.IOException;

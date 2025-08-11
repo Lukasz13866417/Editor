@@ -1,4 +1,4 @@
-package org.example.editor.layout;
+package org.example.editor.layout_elements;
 
 import org.example.editor.config.TabNameGenerator;
 import org.example.editor.config.TerminalConfig;

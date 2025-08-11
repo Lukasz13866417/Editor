@@ -1,4 +1,4 @@
-package org.example.editor.layout;
+package org.example.editor.layout_elements;
 
 import javafx.geometry.Insets;
 import javafx.scene.Node;

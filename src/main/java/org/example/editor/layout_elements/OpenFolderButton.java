@@ -1,8 +1,9 @@
-package org.example.editor.layout;
+package org.example.editor.layout_elements;
 
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.example.editor.layout_api.Component;
 
 import java.io.File;
 import java.io.IOException;

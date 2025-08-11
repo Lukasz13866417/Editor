@@ -1,4 +1,4 @@
-package org.example.editor.layout;
+package org.example.editor.layout_api;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
@@ -8,6 +8,8 @@ import javafx.scene.layout.Region;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.Collections;
 
 public class Component {
 
@@ -15,6 +17,16 @@ public class Component {
         this.region = region;
         this.id = id;
         this.children = new ArrayList<>();
+
+        // Register mapping from Region to Component for hit testing and traversal
+        REGION_TO_COMPONENT.put(this.region, this);
+
+        // Propagate relative layout to children whenever this region is resized by the layout system
+        this.region.widthProperty().addListener((obs, oldVal, newVal) -> resizeChildrenDynamically());
+        this.region.heightProperty().addListener((obs, oldVal, newVal) -> resizeChildrenDynamically());
+
+        // Ensure region is pickable even if transparent or empty
+        this.region.setPickOnBounds(true);
     }
 
     public String getId() {
@@ -32,16 +44,10 @@ public class Component {
             throw new IllegalStateException("Cannot find component with id: " + item.id);
         }
 
-        // Apply geometry to this component's region using absolute methods directly
-        // (since we're loading from saved absolute coordinates)
-        me.placeInParentAbsolute(item.x, item.y);
-        me.setSizeInParentAbsolute(item.width, item.height);
-
-        // Apply relative sizing if available in the saved data
+        // Determine relative geometry first, then apply via relative APIs
         if (item.hasRelativeSize()) {
             me.setRelativeSize(item.relativeWidth, item.relativeHeight);
         } else if (me.parent != null) {
-            // Calculate relative coordinates from absolute ones if not explicitly saved
             double parentWidth = me.parent.region.getWidth();
             double parentHeight = me.parent.region.getHeight();
             if (parentWidth > 0 && parentHeight > 0) {
@@ -52,11 +58,20 @@ public class Component {
         if (item.hasRelativePosition()) {
             me.setRelativePosition(item.relativeX, item.relativeY);
         } else if (me.parent != null) {
-            // Calculate relative position from absolute ones if not explicitly saved
             double parentWidth = me.parent.region.getWidth();
             double parentHeight = me.parent.region.getHeight();
             if (parentWidth > 0 && parentHeight > 0) {
                 me.setRelativePosition(item.x / parentWidth, item.y / parentHeight);
+            }
+        }
+
+        // Apply current relative values to the region if parent is known
+        if (me.parent != null) {
+            if (me.hasRelativePosition()) {
+                me.placeInParentRelative(me.getRelativeX(), me.getRelativeY());
+            }
+            if (me.hasRelativeSize()) {
+                me.setSizeInParentRelative(me.getRelativeWidth(), me.getRelativeHeight());
             }
         }
 
@@ -115,6 +130,9 @@ public class Component {
         p.getChildren().add(child.region);
         children.add(child);
         child.parent = this;
+
+        // If in design mode, ensure gestures are attached appropriately after structure change
+        notifyDesignModeIfActive();
     }
 
     /**
@@ -126,6 +144,9 @@ public class Component {
                 p.getChildren().remove(child.region);
             }
             child.parent = null;
+
+            // If in design mode, ensure gestures are updated after structure change
+            notifyDesignModeIfActive();
         }
     }
 
@@ -140,7 +161,7 @@ public class Component {
     /**
      * Place component using relative coordinates (0.0 to 1.0)
      */
-    public void placeInParent(double relX, double relY) {
+    public void placeInParentRelative(double relX, double relY) {
         // Store relative position
         setRelativePosition(relX, relY);
 
@@ -150,17 +171,14 @@ public class Component {
             double parentHeight = parent.region.getHeight();
             double absoluteX = parentWidth * relX;
             double absoluteY = parentHeight * relY;
-            placeInParentAbsolute(absoluteX, absoluteY);
-        } else {
-            // If no parent, treat as absolute for now
-            placeInParentAbsolute(relX, relY);
+            this.region.relocate(absoluteX, absoluteY);
         }
     }
 
     /**
      * Set component size using relative dimensions (0.0 to 1.0)
      */
-    public void setSizeInParent(double relW, double relH) {
+    public void setSizeInParentRelative(double relW, double relH) {
         // Store relative size
         setRelativeSize(relW, relH);
 
@@ -170,38 +188,16 @@ public class Component {
             double parentHeight = parent.region.getHeight();
             double absoluteW = parentWidth * relW;
             double absoluteH = parentHeight * relH;
-            setSizeInParentAbsolute(absoluteW, absoluteH);
-        } else {
-            // If no parent, treat as absolute for now
-            setSizeInParentAbsolute(relW, relH);
+            setSizeInParentWithoutTrigger(absoluteW, absoluteH);
+            // Trigger dynamic resizing of children after this component changes size
+            resizeChildrenDynamically();
         }
-    }
-
-    /**
-     * Set both position and size using relative coordinates
-     */
-    public void putInParent(double relX, double relY, double relW, double relH) {
-        placeInParent(relX, relY);
-        setSizeInParent(relW, relH);
     }
 
     /**
      * Internal method for absolute positioning (pixels)
      */
-    private void placeInParentAbsolute(double x, double y) {
-        this.region.relocate(x, y);
-    }
-
-    /**
-     * Internal method for absolute sizing (pixels)
-     */
-    private void setSizeInParentAbsolute(double w, double h) {
-        // Force the exact size by setting preferred, min, and max
-        setSizeInParentWithoutTrigger(w,h);
-
-        // Trigger dynamic resizing of children after this component changes size
-        resizeChildrenDynamically();
-    }
+    // Removed absolute placement/size methods; use relative APIs instead
 
     public void placeInWorld(double x, double y) {
         Parent parent = region.getParent();
@@ -247,9 +243,7 @@ public class Component {
 
             // Check if child has relative positioning
             if (child.hasRelativePosition()) {
-                double newX = parentWidth * child.getRelativeX();
-                double newY = parentHeight * child.getRelativeY();
-                child.placeInParentAbsolute(newX, newY);
+                child.placeInParentRelative(child.getRelativeX(), child.getRelativeY());
             }
         }
     }
@@ -295,6 +289,28 @@ public class Component {
         return region;
     }
 
+    /**
+     * Returns the deepest component at the given scene coordinates, or null if none.
+     */
+    public Component findDeepestAt(double sceneX, double sceneY) {
+        if (!containsScenePoint(sceneX, sceneY)) {
+            return null;
+        }
+        for (int i = children.size() - 1; i >= 0; i--) {
+            Component child = children.get(i);
+            Component deep = child.findDeepestAt(sceneX, sceneY);
+            if (deep != null) {
+                return deep;
+            }
+        }
+        return this;
+    }
+
+    private boolean containsScenePoint(double sceneX, double sceneY) {
+        javafx.geometry.Point2D local = region.sceneToLocal(sceneX, sceneY);
+        return region.getBoundsInLocal().contains(local);
+    }
+
     public double getRelativeWidth() { return relativeWidth; }
     public double getRelativeHeight() { return relativeHeight; }
     public double getRelativeX() { return relativeX; }
@@ -310,5 +326,39 @@ public class Component {
     private double relativeHeight = -1;
     private double relativeX = -1;
     private double relativeY = -1;
+
+    // Global mapping from Region to Component (weak to avoid leaks)
+    private static final Map<Region, Component> REGION_TO_COMPONENT = Collections.synchronizedMap(new WeakHashMap<>());
+
+    public static Component fromNode(javafx.scene.Node node) {
+        javafx.scene.Node current = node;
+        while (current != null) {
+            if (current instanceof Region r) {
+                Component c = REGION_TO_COMPONENT.get(r);
+                if (c != null) return c;
+            }
+            current = current.getParent();
+        }
+        return null;
+    }
+
+    public Component getRoot() {
+        Component root = this;
+        while (root.parent != null) root = root.parent;
+        return root;
+    }
+
+    /**
+     * If the root is an EditorLayout in DESIGN mode, re-apply design gestures everywhere.
+     */
+    private void notifyDesignModeIfActive() {
+        Component root = this;
+        while (root.parent != null) {
+            root = root.parent;
+        }
+        if (root instanceof EditorLayout editor && editor.getMode() == EditorLayout.Mode.DESIGN) {
+            editor.refreshDesignGestures();
+        }
+    }
 
 }

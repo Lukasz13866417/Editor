@@ -1,9 +1,10 @@
-package org.example.editor.layout;
+package org.example.editor.layout_elements;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.example.editor.config.TabNameGenerator;
 import org.example.editor.config.TerminalConfig;
+import org.example.editor.layout_api.Component;
 
 import java.nio.file.Path;
 

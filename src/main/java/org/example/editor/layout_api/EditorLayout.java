@@ -1,4 +1,4 @@
-package org.example.editor.layout;
+package org.example.editor.layout_api;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -29,8 +29,20 @@ public class EditorLayout extends Component {
         }
     }
 
+    /**
+     * Re-apply design gestures across the current tree when in DESIGN mode.
+     * Useful after dynamic structure changes (adding/removing children).
+     */
+    public void refreshDesignGestures() {
+        if (getMode() == Mode.DESIGN) {
+            clearDesignGesturesRecursively(this);
+            applyDesignGesturesRecursively(this);
+        }
+    }
+
     private void applyDesignGesturesRecursively(Component component) {
         if (component != this) {
+            // Attach gestures to all components; DesignGestures determines the deepest target
             DesignGestures.makeResizable(component.region);
             DesignGestures.makeDraggable(component.region);
         }

@@ -1,4 +1,4 @@
-package org.example.editor.layout;
+package org.example.editor.layout_elements;
 
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;

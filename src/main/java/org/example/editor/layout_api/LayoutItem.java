@@ -1,4 +1,4 @@
-package org.example.editor.layout;
+package org.example.editor.layout_api;
 
 public class LayoutItem {
     // unique

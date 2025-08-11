@@ -16,8 +16,10 @@ module org.example.editor {
 
     opens org.example.editor to javafx.fxml;
     exports org.example.editor;
-    exports org.example.editor.layout;
-    opens org.example.editor.layout to javafx.fxml;
+    exports org.example.editor.layout_elements;
+    opens org.example.editor.layout_elements to javafx.fxml;
     exports org.example.editor.config;
     exports org.example.editor.helper;
+    exports org.example.editor.layout_api;
+    opens org.example.editor.layout_api to javafx.fxml;
 }

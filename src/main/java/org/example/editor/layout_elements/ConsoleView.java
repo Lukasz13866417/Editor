@@ -1,7 +1,8 @@
-package org.example.editor.layout;
+package org.example.editor.layout_elements;
 
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
+import org.example.editor.layout_api.Component;
 
 /**
  * Komponent konsoli tekstowej, służący do wyświetlania logów lub wyników.
