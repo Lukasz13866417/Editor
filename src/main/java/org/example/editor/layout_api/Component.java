@@ -1,5 +1,9 @@
 package org.example.editor.layout_api;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -20,10 +24,6 @@ public class Component {
 
         // Register mapping from Region to Component for hit testing and traversal
         REGION_TO_COMPONENT.put(this.region, this);
-
-        // Propagate relative layout to children whenever this region is resized by the layout system
-        this.region.widthProperty().addListener((obs, oldVal, newVal) -> resizeChildrenDynamically());
-        this.region.heightProperty().addListener((obs, oldVal, newVal) -> resizeChildrenDynamically());
 
         // Ensure region is pickable even if transparent or empty
         this.region.setPickOnBounds(true);
@@ -65,15 +65,7 @@ public class Component {
             }
         }
 
-        // Apply current relative values to the region if parent is known
-        if (me.parent != null) {
-            if (me.hasRelativePosition()) {
-                me.placeInParentRelative(me.getRelativeX(), me.getRelativeY());
-            }
-            if (me.hasRelativeSize()) {
-                me.setSizeInParentRelative(me.getRelativeWidth(), me.getRelativeHeight());
-            }
-        }
+        // With bindings, geometry will follow when linked to a parent
 
         // Force immediate layout update
         if (me.region.getParent() != null) {
@@ -125,11 +117,13 @@ public class Component {
             old.getChildren().remove(child.region);
             if (child.parent != null) {
                 child.parent.children.remove(child);
+                child.unbindFromParentGeometry();
             }
         }
         p.getChildren().add(child.region);
         children.add(child);
         child.parent = this;
+        child.bindToParentGeometry();
 
         // If in design mode, ensure gestures are attached appropriately after structure change
         notifyDesignModeIfActive();
@@ -147,6 +141,7 @@ public class Component {
 
             // If in design mode, ensure gestures are updated after structure change
             notifyDesignModeIfActive();
+            child.unbindFromParentGeometry();
         }
     }
 
@@ -164,15 +159,6 @@ public class Component {
     public void placeInParentRelative(double relX, double relY) {
         // Store relative position
         setRelativePosition(relX, relY);
-
-        // Calculate and apply absolute position
-        if (parent != null) {
-            double parentWidth = parent.region.getWidth();
-            double parentHeight = parent.region.getHeight();
-            double absoluteX = parentWidth * relX;
-            double absoluteY = parentHeight * relY;
-            this.region.relocate(absoluteX, absoluteY);
-        }
     }
 
     /**
@@ -181,17 +167,6 @@ public class Component {
     public void setSizeInParentRelative(double relW, double relH) {
         // Store relative size
         setRelativeSize(relW, relH);
-
-        // Calculate and apply absolute size
-        if (parent != null) {
-            double parentWidth = parent.region.getWidth();
-            double parentHeight = parent.region.getHeight();
-            double absoluteW = parentWidth * relW;
-            double absoluteH = parentHeight * relH;
-            setSizeInParentWithoutTrigger(absoluteW, absoluteH);
-            // Trigger dynamic resizing of children after this component changes size
-            resizeChildrenDynamically();
-        }
     }
 
     /**
@@ -230,22 +205,7 @@ public class Component {
      * Dynamically resize all children that have relative sizing enabled
      */
     public void resizeChildrenDynamically() {
-        double parentWidth = region.getWidth();
-        double parentHeight = region.getHeight();
-
-        for (Component child : children) {
-            // Check if child has relative sizing stored
-            if (child.hasRelativeSize()) {
-                double newWidth = parentWidth * child.getRelativeWidth();
-                double newHeight = parentHeight * child.getRelativeHeight();
-                child.setSizeInParentWithoutTrigger(newWidth, newHeight);
-            }
-
-            // Check if child has relative positioning
-            if (child.hasRelativePosition()) {
-                child.placeInParentRelative(child.getRelativeX(), child.getRelativeY());
-            }
-        }
+        // No-op with bindings; children follow automatically
     }
 
     /**
@@ -265,24 +225,28 @@ public class Component {
      * Enable relative sizing for this component
      */
     public void setRelativeSize(double relWidth, double relHeight) {
-        this.relativeWidth = Math.max(0.0, Math.min(1.0, relWidth));
-        this.relativeHeight = Math.max(0.0, Math.min(1.0, relHeight));
+        this.relativeWidthProperty.set(Math.max(0.0, Math.min(1.0, relWidth)));
+        this.relativeHeightProperty.set(Math.max(0.0, Math.min(1.0, relHeight)));
+        rebindToParentGeometryIfNeeded();
     }
 
     /**
      * Enable relative positioning for this component
      */
     public void setRelativePosition(double relX, double relY) {
-        this.relativeX = Math.max(0.0, Math.min(1.0, relX));
-        this.relativeY = Math.max(0.0, Math.min(1.0, relY));
+        double maxX = hasRelativeSize() ? (1.0 - Math.max(0.0, Math.min(1.0, relativeWidthProperty.get()))) : 1.0;
+        double maxY = hasRelativeSize() ? (1.0 - Math.max(0.0, Math.min(1.0, relativeHeightProperty.get()))) : 1.0;
+        this.relativeXProperty.set(Math.max(0.0, Math.min(maxX, relX)));
+        this.relativeYProperty.set(Math.max(0.0, Math.min(maxY, relY)));
+        rebindToParentGeometryIfNeeded();
     }
 
     public boolean hasRelativeSize() {
-        return relativeWidth >= 0 && relativeHeight >= 0;
+        return relativeWidthProperty.get() >= 0 && relativeHeightProperty.get() >= 0;
     }
 
     public boolean hasRelativePosition() {
-        return relativeX >= 0 && relativeY >= 0;
+        return relativeXProperty.get() >= 0 && relativeYProperty.get() >= 0;
     }
 
     public Region getRegion() {
@@ -311,21 +275,26 @@ public class Component {
         return region.getBoundsInLocal().contains(local);
     }
 
-    public double getRelativeWidth() { return relativeWidth; }
-    public double getRelativeHeight() { return relativeHeight; }
-    public double getRelativeX() { return relativeX; }
-    public double getRelativeY() { return relativeY; }
+    public double getRelativeWidth() { return relativeWidthProperty.get(); }
+    public double getRelativeHeight() { return relativeHeightProperty.get(); }
+    public double getRelativeX() { return relativeXProperty.get(); }
+    public double getRelativeY() { return relativeYProperty.get(); }
+
+    public DoubleProperty relativeWidthProperty() { return relativeWidthProperty; }
+    public DoubleProperty relativeHeightProperty() { return relativeHeightProperty; }
+    public DoubleProperty relativeXProperty() { return relativeXProperty; }
+    public DoubleProperty relativeYProperty() { return relativeYProperty; }
 
     private final String id; // unique, for keeping component info in files
     protected final Region region;
     private Component parent;
     private final List<Component> children;
 
-    // Relative sizing fields
-    private double relativeWidth = -1;  // -1 means disabled, 0.0-1.0 means percentage
-    private double relativeHeight = -1;
-    private double relativeX = -1;
-    private double relativeY = -1;
+    // Relative fields as bindable properties (-1 means disabled)
+    private final DoubleProperty relativeWidthProperty = new SimpleDoubleProperty(-1);
+    private final DoubleProperty relativeHeightProperty = new SimpleDoubleProperty(-1);
+    private final DoubleProperty relativeXProperty = new SimpleDoubleProperty(-1);
+    private final DoubleProperty relativeYProperty = new SimpleDoubleProperty(-1);
 
     // Global mapping from Region to Component (weak to avoid leaks)
     private static final Map<Region, Component> REGION_TO_COMPONENT = Collections.synchronizedMap(new WeakHashMap<>());
@@ -358,6 +327,59 @@ public class Component {
         }
         if (root instanceof EditorLayout editor && editor.getMode() == EditorLayout.Mode.DESIGN) {
             editor.refreshDesignGestures();
+        }
+    }
+
+    private void bindToParentGeometry() {
+        if (parent == null) return;
+        Region pr = parent.region;
+
+        // Bind only when relative values are enabled
+        if (hasRelativePosition()) {
+            DoubleBinding boundX = Bindings.createDoubleBinding(
+                    () -> pr.getWidth() * relativeXProperty.get(),
+                    pr.widthProperty(), relativeXProperty);
+            DoubleBinding boundY = Bindings.createDoubleBinding(
+                    () -> pr.getHeight() * relativeYProperty.get(),
+                    pr.heightProperty(), relativeYProperty);
+            region.layoutXProperty().bind(boundX);
+            region.layoutYProperty().bind(boundY);
+        }
+        if (hasRelativeSize()) {
+            DoubleBinding boundW = Bindings.createDoubleBinding(
+                    () -> pr.getWidth() * relativeWidthProperty.get(),
+                    pr.widthProperty(), relativeWidthProperty);
+            DoubleBinding boundH = Bindings.createDoubleBinding(
+                    () -> pr.getHeight() * relativeHeightProperty.get(),
+                    pr.heightProperty(), relativeHeightProperty);
+            region.prefWidthProperty().bind(boundW);
+            region.prefHeightProperty().bind(boundH);
+            region.minWidthProperty().bind(boundW);
+            region.minHeightProperty().bind(boundH);
+            region.maxWidthProperty().bind(boundW);
+            region.maxHeightProperty().bind(boundH);
+        }
+    }
+
+    private void unbindFromParentGeometry() {
+        region.layoutXProperty().unbind();
+        region.layoutYProperty().unbind();
+        region.prefWidthProperty().unbind();
+        region.prefHeightProperty().unbind();
+        region.minWidthProperty().unbind();
+        region.minHeightProperty().unbind();
+        region.maxWidthProperty().unbind();
+        region.maxHeightProperty().unbind();
+    }
+
+    private void rebindToParentGeometryIfNeeded() {
+        if (parent == null) return;
+        // Rebind position if it became enabled
+        if (hasRelativePosition() && !region.layoutXProperty().isBound()) {
+            bindToParentGeometry();
+        }
+        if (hasRelativeSize() && !region.prefWidthProperty().isBound()) {
+            bindToParentGeometry();
         }
     }
 

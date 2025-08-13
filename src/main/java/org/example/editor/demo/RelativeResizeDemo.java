@@ -45,7 +45,7 @@ public class RelativeResizeDemo extends Application {
         parent.addChild(childC);
         parent.addChild(childD);
 
-        // Delay relative placement until after first layout pass so parent sizes are known
+        // Defer relative placement until after first layout pass so parent sizes are known
         Platform.runLater(() -> {
             // Place the parent inside the editor with margins
             parent.placeInParentRelative(0.05, 0.05);
@@ -65,12 +65,16 @@ public class RelativeResizeDemo extends Application {
         System.out.println("Parent size: " + parent.getRegion().getWidth() + "x" + parent.getRegion().getHeight());
 
         stage.setTitle("Relative Resize Demo");
-        stage.setScene(new Scene(root, 1000, 700));
+        Scene scene = new Scene(root, 1000, 700);
+        stage.setScene(scene);
+
+        // Enable parent change interaction (press P, pick child, then pick new parent)
+        editorLayout.enableParentChangeInteraction(scene);
         stage.show();
     }
 
     private static Component makeColorBlock(String id, String color) {
-        Region r = new Region();
+        Pane r = new Pane();
         r.setStyle("-fx-background-color: " + color + "; -fx-border-color: rgba(0,0,0,0.35); -fx-border-width: 1;");
         return new Component(r, id);
     }

@@ -65,9 +65,18 @@ public class DesignGestures {
         // Mouse dragged handler - resize or drag based on mode
         node.setOnMouseDragged(event -> {
             Node targetNode = activeNodeRef[0] != null ? activeNodeRef[0] : (Node) event.getSource();
+            Component comp = Component.fromNode(targetNode);
+            if (comp == null || targetNode.getParent() == null) {
+                event.consume();
+                return;
+            }
+            javafx.scene.Parent parent = targetNode.getParent();
+            double parentWidth = parent.getBoundsInLocal().getWidth();
+            double parentHeight = parent.getBoundsInLocal().getHeight();
+
             if (resizeDelta.direction != ResizeDirection.NONE) {
                 // Resize mode - calculate new dimensions and position using parent coordinates
-                Point2D parentCoords = targetNode.getParent().sceneToLocal(event.getSceneX(), event.getSceneY());
+                Point2D parentCoords = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
                 double deltaX = parentCoords.getX() - resizeDelta.x;
                 double deltaY = parentCoords.getY() - resizeDelta.y;
 
@@ -76,76 +85,36 @@ public class DesignGestures {
                 double newW = resizeDelta.startWidth;
                 double newH = resizeDelta.startHeight;
 
-                // Calculate new position and size based on resize direction
                 switch (resizeDelta.direction) {
-                    case NW -> { // Top-left corner
-                        newX = resizeDelta.startX + deltaX;
-                        newY = resizeDelta.startY + deltaY;
-                        newW = resizeDelta.startWidth - deltaX;
-                        newH = resizeDelta.startHeight - deltaY;
-                    }
-                    case NE -> { // Top-right corner
-                        newY = resizeDelta.startY + deltaY;
-                        newW = resizeDelta.startWidth + deltaX;
-                        newH = resizeDelta.startHeight - deltaY;
-                    }
-                    case SW -> { // Bottom-left corner
-                        newX = resizeDelta.startX + deltaX;
-                        newW = resizeDelta.startWidth - deltaX;
-                        newH = resizeDelta.startHeight + deltaY;
-                    }
-                    case SE -> { // Bottom-right corner
-                        newW = resizeDelta.startWidth + deltaX;
-                        newH = resizeDelta.startHeight + deltaY;
-                    }
+                    case NW -> { newX = resizeDelta.startX + deltaX; newY = resizeDelta.startY + deltaY; newW = resizeDelta.startWidth - deltaX; newH = resizeDelta.startHeight - deltaY; }
+                    case NE -> { newY = resizeDelta.startY + deltaY; newW = resizeDelta.startWidth + deltaX; newH = resizeDelta.startHeight - deltaY; }
+                    case SW -> { newX = resizeDelta.startX + deltaX; newW = resizeDelta.startWidth - deltaX; newH = resizeDelta.startHeight + deltaY; }
+                    case SE -> { newW = resizeDelta.startWidth + deltaX; newH = resizeDelta.startHeight + deltaY; }
                 }
 
-                // Apply minimum size constraints
-                if (newW > 20 && newH > 20) {
-                    javafx.scene.layout.Region region = (javafx.scene.layout.Region) targetNode;
-
-                    // Update position and size together using relocate and resize
-                    region.relocate(newX, newY);
-
-                    // Set preferred size
-                    region.setPrefWidth(newW);
-                    region.setPrefHeight(newH);
-                    // Also set min and max size to force the resize
-                    region.setMinWidth(newW);
-                    region.setMinHeight(newH);
-                    region.setMaxWidth(newW);
-                    region.setMaxHeight(newH);
-                    // Force immediate resize
-                    region.resize(newW, newH);
-
-                    // Force immediate layout update to ensure position is committed
-                    if (region.getParent() != null) {
-                        region.getParent().requestLayout();
-                        // Force immediate layout pass
-                        region.getParent().applyCss();
-                        region.getParent().layout();
-                    }
-
-
+                if (newW > 20 && newH > 20 && parentWidth > 0 && parentHeight > 0) {
+                    double relX = newX / parentWidth;
+                    double relY = newY / parentHeight;
+                    double relW = newW / parentWidth;
+                    double relH = newH / parentHeight;
+                    comp.setRelativePosition(relX, relY);
+                    comp.setRelativeSize(relW, relH);
                 }
             } else {
                 // Drag mode - calculate new position from current mouse position
-                Point2D currentParentCoords = targetNode.getParent().sceneToLocal(event.getSceneX(), event.getSceneY());
+                Point2D currentParentCoords = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
                 double newX = currentParentCoords.getX() - dragDelta.x;
                 double newY = currentParentCoords.getY() - dragDelta.y;
-
-                // Apply position directly to avoid triggering relative calculations during drag
-                targetNode.relocate(newX, newY);
-
-                // Force immediate layout update to ensure position is committed
-                if (targetNode.getParent() != null) {
-                    targetNode.getParent().requestLayout();
-                    // Force immediate layout pass
-                    targetNode.getParent().applyCss();
-                    targetNode.getParent().layout();
+                if (parentWidth > 0 && parentHeight > 0) {
+                    double relX = newX / parentWidth;
+                    double relY = newY / parentHeight;
+                    // Clamp using component's current relative size so the node never leaves parent's bounds
+                    double maxX = comp.hasRelativeSize() ? (1.0 - comp.getRelativeWidth()) : 1.0;
+                    double maxY = comp.hasRelativeSize() ? (1.0 - comp.getRelativeHeight()) : 1.0;
+                    relX = Math.max(0.0, Math.min(maxX, relX));
+                    relY = Math.max(0.0, Math.min(maxY, relY));
+                    comp.setRelativePosition(relX, relY);
                 }
-
-
             }
             event.consume();
         });
